@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, ConvoListActivity!</string>
     <string name="app_name">SimpleSMS</string>
+    <string name="menu_compose">Compose</string>
 
 </resources>

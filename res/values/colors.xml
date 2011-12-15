@@ -6,5 +6,10 @@
     <color name="header_end">#95c81c</color>
     <color name="header_start">#95c81c</color>
     
+    <color name="unread_bgcolor">#ffffffff</color>
+    <color name="read_bgcolor">#ffeeeeee</color>
+    
+    <color name="timestamp_color">#ff106080</color>
+    
     <!-- <color name="header_end">#729826</color> -->
 </resources>
