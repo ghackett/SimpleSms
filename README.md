@@ -1,0 +1,1 @@
+Goal: build a simple sms app for android that uses the action bar design pattern
