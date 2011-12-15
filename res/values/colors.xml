@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- 	<color name="header_end">#93C928</color>
+    <color name="header_start">#729826</color> -->
+    
+    <color name="header_end">#95c81c</color>
+    <color name="header_start">#95c81c</color>
+    
+    <!-- <color name="header_end">#729826</color> -->
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="TextAppearance.ActionBar.Title" parent="@android:style/TextAppearance.Medium">
+		<item name="android:textColor">#fff</item>
+		<item name="android:textSize">18sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+	
+	<style name="TextAppearance.ActionBar.Subtitle" parent="@android:style/TextAppearance.Small">
+		<item name="android:textColor">#fff</item>
+		<item name="android:textSize">12sp</item>
+	</style>
+    
+</resources>
