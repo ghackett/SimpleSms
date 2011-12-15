@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style name="Theme.SimpleSms" parent="@style/Theme.Sherlock.Light">
-	    <item name="abBackground">@drawable/bg_header</item>
+	    <item name="abBackground">@drawable/ab_stacked_solid_inverse_holo</item>
 	    <item name="abTitleTextStyle">@style/TextAppearance.ActionBar.Title</item>
 	    <item name="abSubtitleTextStyle">@style/TextAppearance.ActionBar.Subtitle</item>
+	    <item name="abIcon">@drawable/ab_icon</item>
 	</style>
     
 </resources>
