@@ -4,5 +4,7 @@
     <string name="hello">Hello World, ConvoListActivity!</string>
     <string name="app_name">SimpleSMS</string>
     <string name="menu_compose">Compose</string>
+    <string name="new_messages">New Messages</string>
+    <string name="unread_notif_format">%d unread messages</string>
 
 </resources>

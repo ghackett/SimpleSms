@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.episode6.android.simplesms.R;
 import com.episode6.android.simplesms.app.adapter.ConvoListAdapter;
 import com.episode6.android.simplesms.app.adapter.ConvoListAdapter.CursorVals;
+import com.episode6.android.simplesms.app.service.NotificationService;
 
 
 public class ConvoListActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnItemClickListener {
@@ -31,12 +32,13 @@ public class ConvoListActivity extends FragmentActivity implements LoaderCallbac
     private ListView mListView;
     private ConvoListAdapter mAdapter;
     private LazyLoader mLazyLoader;
+    private boolean mResumedOnce = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mLazyLoader = new LazyLoader();
+        mLazyLoader = new LazyLoader(10);
         mListView = (ListView) findViewById(R.id.list);
         mListView.setFadingEdgeLength(0);
         mAdapter = new ConvoListAdapter(this, mLazyLoader);
@@ -46,6 +48,19 @@ public class ConvoListActivity extends FragmentActivity implements LoaderCallbac
     }
     
     
+    
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mResumedOnce) {
+            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+        } else {
+            mResumedOnce = true;
+        }
+        NotificationService.cancelMessageNotification();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

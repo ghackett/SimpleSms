@@ -1,4 +1,4 @@
-package com.episode6.android.simplesms.app;
+package com.episode6.android.simplesms.app.util;
 
 import org.droidkit.DroidKit;
 import org.droidkit.ref.CacheResult;
@@ -18,13 +18,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.episode6.android.simplesms.app.util.ImageUtil;
+import com.episode6.android.simplesms.app.SimpleApplication;
 import com.episode6.android.simplesms.provider.Telephony.Mms;
 
 public class LazyLoadAvatarAndNameTask implements LazyLoaderTask {
     
-    private static WeakBitmapCache sImageCache = new WeakBitmapCache();
-    private static WeakCache<String> sNameCache = new WeakCache<String>();
+//    private static WeakBitmapCache sImageCache = new WeakBitmapCache();
+//    private static WeakCache<String> sNameCache = new WeakCache<String>();
+    
+    private static WeakBitmapCache getImageCache() {
+        return SimpleApplication.get().getImageCache();
+    }
+    
+    private static WeakCache<String> getNameCache() {
+        return SimpleApplication.get().getNameCache();
+    }
     
     private String mAddress = null;
     private ImageView mImageView = null;
@@ -52,8 +60,8 @@ public class LazyLoadAvatarAndNameTask implements LazyLoaderTask {
             return false;
         }
         
-        CacheResult<Bitmap> bitmapResult = sImageCache.get(mAddress);
-        CacheResult<String> nameResult = sNameCache.get(mAddress);
+        CacheResult<Bitmap> bitmapResult = getImageCache().get(mAddress);
+        CacheResult<String> nameResult = getNameCache().get(mAddress);
         if (bitmapResult.isCached() && nameResult.isCached()) {
             mImageResult = bitmapResult.getCachedObject();
             mNameResult = nameResult.getCachedObject();
@@ -62,7 +70,7 @@ public class LazyLoadAvatarAndNameTask implements LazyLoaderTask {
         }
         
         
-        mImageView.setImageResource(ImageUtil.getDefaultContactIcon());
+        mImageView.setImageResource(ImageUtil.getDefaultContactIcon(mAddress));
         mNameView.setText(mAddress);
         return true;
     }
@@ -96,7 +104,8 @@ public class LazyLoadAvatarAndNameTask implements LazyLoaderTask {
         if (c != null) {
             if (c.moveToFirst()) {
                 mNameResult = c.getString(0);
-                sNameCache.put(mAddress, mNameResult);
+                if (mNameResult != null && !mNameResult.equals(mAddress))
+                    getNameCache().put(mAddress, mNameResult);
                 lookupUri = Uri.withAppendedPath(Contacts.CONTENT_URI, c.getString(1));
             }
             c.close();
@@ -104,14 +113,14 @@ public class LazyLoadAvatarAndNameTask implements LazyLoaderTask {
         
         if (lookupUri != null) {
             mImageResult = ImageTricks.scaleDownContactPhoto(lookupUri, DroidKit.getPixels(mMaxDimensionDp));
-            sImageCache.put(mAddress, mImageResult);
+            getImageCache().put(mAddress, mImageResult);
         }
     }
 
     @Override
     public void onLoadComplete() {
         if (mImageResult == null || mImageResult.isRecycled())
-            mImageView.setImageResource(ImageUtil.getDefaultContactIcon());
+            mImageView.setImageResource(ImageUtil.getDefaultContactIcon(mAddress));
         else
             mImageView.setImageBitmap(mImageResult);
         

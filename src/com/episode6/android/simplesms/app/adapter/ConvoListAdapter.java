@@ -16,8 +16,8 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import com.episode6.android.simplesms.R;
-import com.episode6.android.simplesms.app.LazyLoadAvatarAndNameTask;
 import com.episode6.android.simplesms.app.util.DateUtil;
+import com.episode6.android.simplesms.app.util.LazyLoadAvatarAndNameTask;
 import com.episode6.android.simplesms.provider.Telephony.Mms;
 import com.episode6.android.simplesms.provider.Telephony.TextBasedSmsColumns;
 import com.episode6.android.simplesms.provider.Telephony.Threads;
