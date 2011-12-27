@@ -2,12 +2,12 @@ package com.episode6.android.simplesms.app;
 
 import org.droidkit.DroidKit;
 import org.droidkit.ref.CacheManager;
-import org.droidkit.ref.WeakBitmapCache;
-import org.droidkit.ref.WeakCache;
-
-import com.episode6.android.smiley.SmileyParser;
+import org.droidkit.ref.SoftBitmapCache;
+import org.droidkit.ref.SoftCache;
 
 import android.app.Application;
+
+import com.episode6.android.smiley.SmileyParser;
 
 public class SimpleApplication extends Application {
     
@@ -17,8 +17,8 @@ public class SimpleApplication extends Application {
         return sInstance;
     }
     
-    private WeakBitmapCache mImageCache = null;
-    private WeakCache<String> mNameCache = null;
+    private SoftBitmapCache mImageCache = null;
+    private SoftCache<String> mNameCache = null;
 
     @Override
     public void onCreate() {
@@ -26,15 +26,15 @@ public class SimpleApplication extends Application {
         DroidKit.onApplicationCreate(this);
         SmileyParser.init(getApplicationContext());
         sInstance = this;
-        mImageCache = new WeakBitmapCache();
-        mNameCache = new WeakCache<String>();
+        mImageCache = new SoftBitmapCache();
+        mNameCache = new SoftCache<String>();
     }
     
-    public WeakBitmapCache getImageCache() {
+    public SoftBitmapCache getImageCache() {
         return mImageCache; 
     }
     
-    public WeakCache<String> getNameCache() {
+    public SoftCache<String> getNameCache() {
         return mNameCache;
     }
 

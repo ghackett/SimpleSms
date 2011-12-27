@@ -10,9 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.provider.ContactsContract.PhoneLookup;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.telephony.SmsMessage;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -20,8 +17,8 @@ import android.text.style.StyleSpan;
 
 import com.episode6.android.simplesms.R;
 import com.episode6.android.simplesms.app.activity.ConvoListActivity;
+import com.episode6.android.simplesms.app.util.ContactUtil;
 import com.episode6.android.simplesms.provider.Telephony;
-import com.episode6.android.simplesms.provider.Telephony.Mms;
 
 public class NotificationService extends WakefulIntentService {
     
@@ -42,27 +39,28 @@ public class NotificationService extends WakefulIntentService {
         try {
             SpannableString ticker = null;
             String title = null;
-            String content = null;
+            CharSequence content = null;
             
             SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
             if (messages != null) {
                 
                 if (messages.length >= 1) {
-                    String displayName = getDisplayNameForAddress(messages[0].getDisplayOriginatingAddress()); 
+                    String displayName = ContactUtil.getContactName(messages[0].getDisplayOriginatingAddress()); 
                     String msgBody = messages[0].getDisplayMessageBody();
                     ticker = new SpannableString(displayName + ": " + msgBody);
                     ticker.setSpan(new StyleSpan(Typeface.BOLD), 0, displayName.length()+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 
-                    InboxDetail detail = getUnreadDetail(messages.length, messages[0].getDisplayOriginatingAddress());
+                    InboxDetail detail = getUnreadDetail(messages.length, messages[0].getDisplayOriginatingAddress(), msgBody);
                     if (detail.samePerson) {
-                        title = displayName;
-                    } else {
-                        title = DroidKit.getString(R.string.new_messages);
-                    }
-                    if (detail.unreadCount > 1) {
-                        content = DroidKit.getString(R.string.unread_notif_format, detail.unreadCount);
-                    } else {
+                        if (detail.unreadCount > 1) {
+                            title = DroidKit.getString(R.string.same_person_multi_title, displayName, detail.unreadCount);
+                        } else {
+                            title = displayName;
+                        }
                         content = msgBody;
+                    } else {
+                        title = DroidKit.getString(R.string.unread_notif_format, detail.unreadCount);
+                        content = ticker;
                     }
             
                     Notification notif = new Notification(R.drawable.stat_notify_sms, ticker, System.currentTimeMillis());
@@ -86,40 +84,17 @@ public class NotificationService extends WakefulIntentService {
         getNotificationManager().cancel(NOTIFY_NEW_MESSAGE_ID);
     }
     
-    private String getDisplayNameForAddress(String address) {
-        Cursor c;
-        String rtr = address;
-        
-        if (Mms.isEmailAddress(address)) {
-            c = DroidKit.getContentResolver().query(Uri.withAppendedPath(Email.CONTENT_FILTER_URI, address), 
-                    new String[] {Email.DISPLAY_NAME}, 
-                    null, null, null);
-        } else {
-            c = DroidKit.getContentResolver().query(
-                    Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, address), 
-                    new String[] {PhoneLookup.DISPLAY_NAME}, 
-                    null, null, null);
-        }
-        
-        if (c != null) {
-            if (c.moveToFirst()) {
-                rtr = c.getString(0).trim();
-            }
-            c.close();
-        }
-        return rtr;
-        
-    }
     
-    private InboxDetail getUnreadDetail(int newMsgCount, String addr) {
+    private InboxDetail getUnreadDetail(int newMsgCount, String addr, String body) {
         InboxDetail rtr = new InboxDetail();
-        Cursor c = DroidKit.getContentResolver().query(Telephony.Sms.Inbox.CONTENT_URI, new String[] {Telephony.Sms.Inbox.ADDRESS}, Telephony.Sms.Inbox.READ + "=0", null, null);
+        Cursor c = DroidKit.getContentResolver().query(Telephony.Sms.Inbox.CONTENT_URI, new String[] {Telephony.Sms.Inbox.ADDRESS, Telephony.Sms.Inbox.BODY}, Telephony.Sms.Inbox.READ + "=0", null, null);
         if (c != null) {
             rtr.unreadCount = c.getCount() + newMsgCount;
             while (c.moveToNext()) {
                 if (!addr.equals(c.getString(0))) {
                     rtr.samePerson = false;
-                    break;
+                } else if (body != null && body.equals(c.getString(1))) {
+                    rtr.unreadCount--;
                 }
             }
             c.close();

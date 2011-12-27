@@ -5,6 +5,7 @@
     <string name="app_name">SimpleSMS</string>
     <string name="menu_compose">Compose</string>
     <string name="new_messages">New Messages</string>
-    <string name="unread_notif_format">%d unread messages</string>
+    <string name="unread_notif_format">%d New Messages</string>
+    <string name="same_person_multi_title">%1$s (%2$d Messages)</string>
 
 </resources>

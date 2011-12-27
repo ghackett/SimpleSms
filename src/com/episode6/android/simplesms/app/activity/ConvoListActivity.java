@@ -31,17 +31,19 @@ public class ConvoListActivity extends FragmentActivity implements LoaderCallbac
     
     private ListView mListView;
     private ConvoListAdapter mAdapter;
-    private LazyLoader mLazyLoader;
+    private LazyLoader mImageLoader;
+    private LazyLoader mNameLoader;
     private boolean mResumedOnce = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mLazyLoader = new LazyLoader(10);
+        mImageLoader = new LazyLoader();
+        mNameLoader = new LazyLoader(10);
         mListView = (ListView) findViewById(R.id.list);
         mListView.setFadingEdgeLength(0);
-        mAdapter = new ConvoListAdapter(this, mLazyLoader);
+        mAdapter = new ConvoListAdapter(this, mImageLoader, mNameLoader);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
@@ -115,8 +117,10 @@ public class ConvoListActivity extends FragmentActivity implements LoaderCallbac
     @Override
     protected void onDestroy() {
         getSupportLoaderManager().destroyLoader(LOADER_ID);
-        mLazyLoader.shutdown();
-        mLazyLoader = null;
+        mImageLoader.shutdown();
+        mImageLoader = null;
+        mNameLoader.shutdown();
+        mNameLoader = null;
         super.onDestroy();
     }
 

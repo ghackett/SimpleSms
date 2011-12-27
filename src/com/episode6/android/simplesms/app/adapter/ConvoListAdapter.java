@@ -17,7 +17,8 @@ import android.widget.TextView;
 
 import com.episode6.android.simplesms.R;
 import com.episode6.android.simplesms.app.util.DateUtil;
-import com.episode6.android.simplesms.app.util.LazyLoadAvatarAndNameTask;
+import com.episode6.android.simplesms.app.util.LazyLoadAvatarTask;
+import com.episode6.android.simplesms.app.util.LazyLoadNameTask;
 import com.episode6.android.simplesms.provider.Telephony.Mms;
 import com.episode6.android.simplesms.provider.Telephony.TextBasedSmsColumns;
 import com.episode6.android.simplesms.provider.Telephony.Threads;
@@ -44,11 +45,13 @@ public class ConvoListAdapter extends CursorAdapter {
     public static final int COL_BODY = 4;
     public static final int COL_READ = 5;
     
-    private LazyLoader mLazyLoader;
+    private LazyLoader mImageLoader;
+    private LazyLoader mNameLoader;
 
-    public ConvoListAdapter(Context context, LazyLoader lazyLoader) {
+    public ConvoListAdapter(Context context, LazyLoader imageLoader, LazyLoader nameLoader) {
         super(context, null, false);
-        mLazyLoader = lazyLoader;
+        mImageLoader = imageLoader;
+        mNameLoader = nameLoader;
     }
 
     @Override
@@ -85,7 +88,8 @@ public class ConvoListAdapter extends CursorAdapter {
             v.timestamp.setText(DateFormat.getMediumDateFormat(DroidKit.getContext()).format(c.date));
         }
         
-        mLazyLoader.addTask(new LazyLoadAvatarAndNameTask(c.address, v.badge, v.title, 50));
+        mImageLoader.addTask(new LazyLoadAvatarTask(c.address, v.badge));
+        mNameLoader.addTask(new LazyLoadNameTask(c.address, v.title));
         
     }
     
